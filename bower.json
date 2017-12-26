@@ -1,0 +1,18 @@
+{
+  "name": "tictactoejs",
+  "authors": [
+    "Semyon Velichko <semyon@velichko.net>"
+  ],
+  "description": "JavaScript implementation of Tic-Tac-Toe game",
+  "main": "tictactoe.js",
+  "keywords": [
+    "tictactoe",
+    "minimax"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "dependencies": {
+    "jquery": "^3.2.1"
+  }
+}

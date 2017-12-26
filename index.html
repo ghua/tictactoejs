@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="height=device-height, initial-scale=1">
+    <title>Tic-Tac-Toe JS</title>
+    <style>
+        .board {
+            width: 62vh;
+            height: 62vh;
+            margin: 3vh auto;
+        }
+        .cell {
+            width: 20vh;
+            height: 20vh;
+            float: left;
+            cursor: pointer;
+        }
+
+        .row {
+            clear: both;
+            height: 20vh;
+        }
+
+        .cell:nth-of-type(1), .cell:nth-of-type(2) {
+            border-right: 0.2vh solid cadetblue;
+        }
+
+        .row:nth-of-type(1) .cell, .row:nth-of-type(2) .cell {
+            border-bottom: 0.2vh solid cadetblue;
+        }
+
+        .x:before {
+            position: relative;
+            left: 0.6vh;
+            top: 8.6vh;
+            display: block;
+            content: '';
+            margin: 0 auto;
+            height: 2vh;
+            width: 12vh;
+            border-radius: 0.2vh;
+            background-color: black;
+            border: 0.2vh solid black;
+            transform: rotate(-45deg);
+        }
+
+        .x:after {
+            position: relative;
+            left: 0.6vh;
+            top: 6.2vh;
+            display: block;
+            content: '';
+            margin: 0 auto;
+            height: 2vh;
+            width: 12vh;
+            border-radius: 0.2vh;
+            background-color: black;
+            border: 0.2vh solid black;
+            transform: rotate(45deg);
+        }
+
+        .o {
+            position: relative;
+            left: 4.2vh;
+            top: 4.2vh;
+            width: 7.4vh;
+            height: 7.4vh;
+            border-radius: 50%;
+            border: 2vh solid black;
+        }
+    </style>
+</head>
+<body>
+<div class="board">
+    <div class="row">
+        <div class="cell" id="8"></div>
+        <div class="cell" id="7"></div>
+        <div class="cell" id="6"></div>
+    </div>
+    <div class="row">
+        <div class="cell" id="5"></div>
+        <div class="cell" id="4"></div>
+        <div class="cell" id="3"></div>
+    </div>
+    <div class="row">
+        <div class="cell" id="2"></div>
+        <div class="cell" id="1"></div>
+        <div class="cell" id="0"></div>
+    </div>
+</div>
+</body>
+<script src="bower_components/jquery/dist/jquery.slim.min.js"></script>
+<script src="tictactoe.js"></script>
+<script>
+    var tictactoe = new TicTacToe();
+    var inProccess = false;
+
+    $('div.cell').click(function () {
+        if (inProccess) {
+            return;
+        }
+
+        inProccess = true;
+        if ($(this).hasClass('used')) {
+            return;
+        }
+
+        var n;
+
+        $(this).addClass('used');
+        var gameover = function () {
+            var status = tictactoe.checkForGameOver();
+            if (0 === status) {
+                alert('Draw');
+            }
+            if (0 < status) {
+                alert((tictactoe.getNextStepSide() === 0 ? 'O' : 'X') + ' WON!');
+            }
+        };
+
+        $(this).append('<div class="x"></div>');
+
+        tictactoe.move($(this).attr('id'), gameover);
+
+        if ((n = tictactoe.think()) < 0) {
+            return;
+        }
+
+        $('#' + n).append('<div class="o"></div>')
+            .addClass('used');
+
+        setTimeout(function () {
+            tictactoe.move(n, gameover);
+            inProccess = false;
+        }, 200)
+    });
+</script>
+</html>
