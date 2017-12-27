@@ -133,12 +133,15 @@
             }
 
             var origStatus = (tictactoe.checkForGameOver());
+            if (origStatus === 0) {
+                origStatus = 511 << 1;
+            }
             if (0 < origStatus) {
                 var status = (((origStatus >> 1).toString(2)).split('')).reverse();
                 for(var n = 0; n < status.length; n++) {
                     var c = status[n];
                     if (c === '1') {
-                        $('#' + n + ' div.' + ( ((origStatus-1) >> 1) ===  (origStatus >> 1) ? 'x' : 'o') ).toggle();
+                        $('#' + n + ' div' + (origStatus < 1022 ? ((origStatus-1) >> 1) ===  (origStatus >> 1) ? '.x' : '.o'  : '' )).toggle();
                     }
                 }
             }
