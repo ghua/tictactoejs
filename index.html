@@ -85,6 +85,7 @@
         a.chosen {
             color: green;
         }
+
     </style>
 </head>
 <body>
@@ -119,6 +120,7 @@
 
     var gameover = function () {
         var status = tictactoe.checkForGameOver();
+        chooseSide(chosenSide);
         if (0 === status) {
             alert('Draw');
         }
@@ -138,17 +140,12 @@
 
         setTimeout(function () {
             tictactoe.move(n, gameover);
-            inProgress = false;
         }, 200)
     };
 
     var chooseSide = function (side) {
         chosenSide = side;
-        for (var n = 0; n < 2; n++) {
-            if (tictactoe.getBoardBySide(n) > 0) {
-                return;
-            }
-        }
+        reset();
 
         $('a.chosen').removeClass('chosen');
         $('#' + (side ? 'x' : 'o') + '-side').addClass('chosen');
@@ -160,12 +157,17 @@
         }
     };
 
-    $('#reset').click(function () {
-        tictactoe.reset();
+    var reset = function () {
         $('div.cell').each(function () {
             $(this).html('').removeClass('used')
         });
-        chooseSide(1);
+        tictactoe.reset();
+        inProgress = false;
+
+    };
+
+    $('#reset').click(function () {
+        chooseSide(chosenSide);
     });
 
     $('a.chose').click(function () {
@@ -189,6 +191,8 @@
         tictactoe.move($(this).attr('id'), gameover);
 
         thinkAndMove();
+
+        inProgress = false;
     });
 </script>
 </html>
