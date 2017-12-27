@@ -105,10 +105,10 @@ var TicTacToe = (function () {
             var isXWon = (wp-1 >> 1) === (wp >> 1);
 
             if (isInitialSide !== isXWon) {
-                return -depth;
+                return depth - 10;
             }
 
-            return depth;
+            return 10 - depth;
         }
         if (wp === 0) {
             return 0;
