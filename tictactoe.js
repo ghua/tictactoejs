@@ -16,6 +16,7 @@ var TicTacToe = (function () {
         for (var n = 0; n < 9; n++) {
             this.possiblePositions[n] = Math.pow(2, n);
         }
+        this.searchOrder = [4, 0, 2, 6, 8, 1, 3, 5, 7];
 
         this.reset();
     }
@@ -31,7 +32,7 @@ var TicTacToe = (function () {
 
     TicTacToe.prototype.setNextStepSide = function (side) {
         if (side > 1 || side < 0) {
-            throw 'Side must be between 0 and 1'
+            throw 'Side must be 0 for O or 1 for X'
         }
 
         this.boards[2] = this.boards[3] = side;
@@ -95,7 +96,7 @@ var TicTacToe = (function () {
             return 0;
         }
 
-        return -1;
+        return -Infinity;
     };
 
     TicTacToe.prototype.estimatePosition = function (depth) {
@@ -103,18 +104,14 @@ var TicTacToe = (function () {
         if (wp > 0) {
             var isInitialSide = this.boards[3];
             var isXWon = (wp-1 >> 1) === (wp >> 1);
-
-            if (isInitialSide !== isXWon) {
-                return depth - 10;
+            if (isInitialSide !== (isXWon ? 0 : 1)) {
+                return 10 - depth;
             }
 
-            return 10 - depth;
-        }
-        if (wp === 0) {
-            return 0;
+            return depth - 10;
         }
 
-        return -Infinity;
+        return wp;
     };
 
     TicTacToe.prototype.cloneBoard = function () {
@@ -147,11 +144,8 @@ var TicTacToe = (function () {
             }
         }
 
-        for (var i = 0; i < 9; i++) {
-            var n = [4, 0, 2, 6, 8, 1, 3, 5, 7][i];
-            // var n = [4, 1, 2, 3, 5, 6, 7, 8, 0][i];
-            // var n = i;
-
+        for (var n, i = 0; i < this.searchOrder.length; i++) {
+            n = this.searchOrder[i];
             if (!this.isMovePossible(n)) {
                 continue;
             }
@@ -159,12 +153,15 @@ var TicTacToe = (function () {
             var boards = this.cloneBoard();
             this.move(n);
             score = this._find(depth+1);
+
             this.boards = boards;
 
             if (depth % 2 === 0) { // max side
                 if (best === undefined || score > best) {
                     best = score;
-                    this.lastBestMove = n;
+                    if (depth === 0) {
+                        this.lastBestMove = n;
+                    }
                 }
             } else { // min side
                 if (best === undefined || score < best) {

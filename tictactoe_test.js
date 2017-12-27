@@ -2,15 +2,42 @@ const tictactoe = require('./tictactoe.js');
 const assert = require('assert');
 
 /**
- * test think
+ * 0) o = 8; x = 144;
  *
+ *  |x|
+ * -----
+ *  |x|o
+ * -----
+ *  | |
+ *
+ *
+ * 1) o = 10; x = 144;
+ *
+ *  |x|
+ * -----
+ *  |x|o
+ * -----
+ *  |o|
+ *
+ * 2) o = 10; x = 145;
+ *
+ *  |x|
+ * -----
+ *  |x|o
+ * -----
+ *  |o|x
+ */
+tictactoe.boards = [8, 144, 0, 0];
+assert.equal(1, tictactoe.think());
+
+/**
  * x| |o
  * -----
- *  |x
+ *  |x|
  * -----
  * o| |
  */
-tictactoe.boards = [ /* o: */ 65, /* x: */ 272, 0 ]; // o: 001000001, x: 100010000, x
+tictactoe.boards = [ /* o: */ 65, /* x: */ 272, 0, 0]; // o: 001000001, x: 100010000, x
 assert.equal(3, tictactoe.think());
 
 /**
@@ -61,7 +88,7 @@ for (var n = 0; n < 2; n++) {
     tictactoe.reset();
     tictactoe.setNextStepSide(n);
     tictactoe.setBoardPosition(0);
-    assert.equal(-1, tictactoe.checkForGameOver());
+    assert.equal(-Infinity, tictactoe.checkForGameOver());
     tictactoe.setBoardPosition(73); // 001001001
     assert.equal((73 << 1) + n, tictactoe.checkForGameOver());
     tictactoe.reset();
@@ -71,7 +98,7 @@ for (var n = 0; n < 2; n++) {
     tictactoe.reset();
     tictactoe.setNextStepSide(n);
     tictactoe.setBoardPosition(418); // 110100010
-    assert.equal(-1, tictactoe.checkForGameOver());
+    assert.equal(-Infinity, tictactoe.checkForGameOver());
     tictactoe.reset();
     tictactoe.setNextStepSide(n);
     tictactoe.setBoardPosition(480); // 111100000
