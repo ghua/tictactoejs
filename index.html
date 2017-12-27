@@ -119,14 +119,31 @@
     tictactoe.setMySide((chosenSide = 1) ^ 1);
 
     var gameover = function () {
-        var status = tictactoe.checkForGameOver();
-        chooseSide(chosenSide);
-        if (0 === status) {
-            alert('Draw');
-        }
-        if (0 < status) {
-            alert((tictactoe.getNextStepSide() === 0 ? 'O' : 'X') + ' WON!');
-        }
+        blink(0);
+
+        setTimeout(function () {
+            chooseSide(chosenSide);
+        }, 2500);
+    };
+
+    var blink = function(depth) {
+        setTimeout(function () {
+            if (depth > 5) {
+                return;
+            }
+
+            var origStatus = (tictactoe.checkForGameOver());
+            if (0 < origStatus) {
+                var status = (((origStatus >> 1).toString(2)).split('')).reverse();
+                for(var n = 0; n < status.length; n++) {
+                    var c = status[n];
+                    if (c === '1') {
+                        $('#' + n + ' div.' + ( ((origStatus-1) >> 1) ===  (origStatus >> 1) ? 'x' : 'o') ).toggle();
+                    }
+                }
+            }
+            blink(depth+1)
+        }, 200);
     };
 
     var thinkAndMove = function () {
@@ -138,9 +155,7 @@
         $('#' + n).append('<div class="' + ( chosenSide ? 'o' : 'x' ) + '"></div>')
             .addClass('used');
 
-        setTimeout(function () {
-            tictactoe.move(n, gameover);
-        }, 200)
+        tictactoe.move(n, gameover);
     };
 
     var chooseSide = function (side) {
@@ -158,12 +173,11 @@
     };
 
     var reset = function () {
+        tictactoe.reset();
         $('div.cell').each(function () {
             $(this).html('').removeClass('used')
         });
-        tictactoe.reset();
         inProgress = false;
-
     };
 
     $('#reset').click(function () {
