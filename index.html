@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="height=device-height, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
     <title>Tic-Tac-Toe JS</title>
     <style>
         .board {
@@ -69,6 +70,21 @@
             border-radius: 50%;
             border: 2vh solid black;
         }
+
+        .panel {
+            font-family: 'VT323', monospace;
+            font-size: 10vh;
+            text-align: center;
+        }
+
+        /* selected link */
+        a:active, a:hover, a:visited {
+            color: blue;
+        }
+
+        a.chosen {
+            color: green;
+        }
     </style>
 </head>
 <body>
@@ -89,51 +105,90 @@
         <div class="cell" id="0"></div>
     </div>
 </div>
+<div class="panel">
+    <p>
+        <span>Choose a side:&nbsp;</span><a href="#" class="chose chosen" id="x-side">X</a>&nbsp;/&nbsp;<a href="#" class="chose" id="o-side">O</a> or <a href="#" id="reset">reset the game</a>
+    </p>
+</div>
 </body>
 <script src="bower_components/jquery/dist/jquery.slim.min.js"></script>
 <script src="tictactoe.js"></script>
 <script>
-    var tictactoe = new TicTacToe();
-    var inProccess = false;
+    var tictactoe = new TicTacToe(), chosenSide, inProgress = false;
+    tictactoe.setMySide((chosenSide = 1) ^ 1);
 
-    $('div.cell').click(function () {
-        if (inProccess) {
-            return;
+    var gameover = function () {
+        var status = tictactoe.checkForGameOver();
+        if (0 === status) {
+            alert('Draw');
         }
-
-        inProccess = true;
-        if ($(this).hasClass('used')) {
-            return;
+        if (0 < status) {
+            alert((tictactoe.getNextStepSide() === 0 ? 'O' : 'X') + ' WON!');
         }
+    };
 
+    var thinkAndMove = function () {
         var n;
-
-        $(this).addClass('used');
-        var gameover = function () {
-            var status = tictactoe.checkForGameOver();
-            if (0 === status) {
-                alert('Draw');
-            }
-            if (0 < status) {
-                alert((tictactoe.getNextStepSide() === 0 ? 'O' : 'X') + ' WON!');
-            }
-        };
-
-        $(this).append('<div class="x"></div>');
-
-        tictactoe.move($(this).attr('id'), gameover);
-
         if ((n = tictactoe.think()) < 0) {
             return;
         }
 
-        $('#' + n).append('<div class="o"></div>')
+        $('#' + n).append('<div class="' + ( chosenSide ? 'o' : 'x' ) + '"></div>')
             .addClass('used');
 
         setTimeout(function () {
             tictactoe.move(n, gameover);
-            inProccess = false;
+            inProgress = false;
         }, 200)
+    };
+
+    var chooseSide = function (side) {
+        chosenSide = side;
+        for (var n = 0; n < 2; n++) {
+            if (tictactoe.getBoardBySide(n) > 0) {
+                return;
+            }
+        }
+
+        $('a.chosen').removeClass('chosen');
+        $('#' + (side ? 'x' : 'o') + '-side').addClass('chosen');
+
+        tictactoe.setMySide(side ^ 1);
+
+        if (!side) {
+            thinkAndMove();
+        }
+    };
+
+    $('#reset').click(function () {
+        tictactoe.reset();
+        $('div.cell').each(function () {
+            $(this).html('').removeClass('used')
+        });
+        chooseSide(1);
+    });
+
+    $('a.chose').click(function () {
+        chooseSide($(this).attr('id') === 'x-side' ? 1 : 0);
+    });
+
+    $('div.cell').click(function () {
+        if (inProgress) {
+            return;
+        }
+
+        inProgress = true;
+
+        if ($(this).hasClass('used')) {
+            return;
+        }
+
+        $(this).addClass('used')
+            .append('<div class="' + ( chosenSide ? 'x' : 'o' ) + '"></div>');
+
+        tictactoe.move($(this).attr('id'), gameover);
+
+        thinkAndMove();
     });
 </script>
 </html>

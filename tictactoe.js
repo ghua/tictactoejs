@@ -30,12 +30,22 @@ var TicTacToe = (function () {
         return this.boards[2];
     };
 
-    TicTacToe.prototype.setNextStepSide = function (side) {
+    TicTacToe.prototype.validateSide = function (side) {
         if (side > 1 || side < 0) {
             throw 'Side must be 0 for O or 1 for X'
         }
+    };
 
-        this.boards[2] = this.boards[3] = side;
+    TicTacToe.prototype.setNextStepSide = function (side) {
+        this.validateSide(side);
+
+        this.boards[2] = side;
+    };
+
+    TicTacToe.prototype.setMySide = function (side) {
+        this.validateSide(side);
+
+        this.boards[3] = side;
     };
 
     TicTacToe.prototype.setBoardPosition = function (state) {
