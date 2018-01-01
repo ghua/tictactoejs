@@ -132,20 +132,21 @@
                 return;
             }
 
-            var origStatus = (tictactoe.checkForGameOver());
-            if (origStatus === 0) {
-                origStatus = 511 << 1;
+            var status = (tictactoe.checkForGameOver());
+            if (status === 0) {
+                status = 511 << 1;
             }
-            if (0 < origStatus) {
-                var status = (((origStatus >> 1).toString(2)).split('')).reverse();
-                for(var n = 0; n < status.length; n++) {
-                    var c = status[n];
-                    if (c === '1') {
-                        $('#' + n + ' div' + (origStatus < 1022 ? ((origStatus-1) >> 1) ===  (origStatus >> 1) ? '.x' : '.o'  : '' )).toggle();
+            if (status > 0) {
+                var isXWon = ((status-1) >> 1) === (status >> 1);
+                status = status >> 1;
+                for(var n = 0; n < Math.ceil(Math.log2(status)); n++) {
+                    var c = Math.pow(2, n);
+                    if ((status & c) === c) {
+                        $('#' + n + ' div' + (status < 511 ? ( isXWon ? '.x' : '.o' ) : '' )).toggle();
                     }
                 }
             }
-            blink(depth+1)
+            blink(depth+1);
         }, 200);
     };
 
